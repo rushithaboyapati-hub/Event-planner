@@ -1,9 +1,6 @@
 -- Event Planner - PostgreSQL Schema
--- Run: psql -U postgres -d eventplanner -f schema.sql
-
-CREATE DATABASE eventplanner;
-
-\c eventplanner;
+-- Run after creating/selecting the eventplanner database:
+-- psql -U postgres -d eventplanner -f sql/schema.sql
 
 -- Users
 CREATE TABLE users (
@@ -96,3 +93,4 @@ CREATE INDEX idx_registrations_status ON registrations(status);
 CREATE INDEX idx_registrations_user_event ON registrations(user_id, event_id);
 CREATE INDEX idx_waitlist_event_position ON waitlist(event_id, position);
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_verified ON users(is_verified);

@@ -10,7 +10,7 @@ a { text-decoration: none; color: inherit; }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 
-.card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1rem; }
+.card { background: #fff; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1rem; }
 .card h3 { margin-bottom: 0.5rem; }
 .card p { color: #666; font-size: 0.9rem; }
 
@@ -93,6 +93,9 @@ label { display: block; font-weight: 500; margin-bottom: 0.3rem; font-size: 0.85
 .detail-meta-item .value { font-size: 1rem; font-weight: 500; margin-top: 0.2rem; }
 
 @media (max-width: 768px) {
+  .navbar { align-items: flex-start; flex-direction: column; gap: 0.75rem; padding: 1rem; }
+  .nav-links { flex-wrap: wrap; }
+  .navbar a { margin-left: 0; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .detail-meta { grid-template-columns: 1fr; }

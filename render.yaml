@@ -58,3 +58,5 @@ services:
         value: 10000
       - key: GATEWAY_URL
         value: https://eventplanner-fastapi.onrender.com
+      - key: VITE_API_BASE_URL
+        value: https://eventplanner-fastapi.onrender.com

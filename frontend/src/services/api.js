@@ -43,12 +43,14 @@ function parse(query, items, fields) {
   );
 }
 
-// In local dev, both backends are proxied through the FastAPI gateway under /api/sql and /api/mongo.
-// For a GH Pages (static) build, set VITE_API_BASE_URL to the deployed MongoDB-backed
-// Node API origin; it serves both the Spring-shaped routes and the Mongo-only routes under /api/*.
+// In local dev, Vite proxies /api/* to the FastAPI gateway.
+// In static deployments, VITE_API_BASE_URL should usually point at the FastAPI gateway.
+// Set VITE_API_MODE=node only when pointing the frontend directly at the Node API.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-const sqlBase = API_BASE_URL ? `${API_BASE_URL}/api` : '/api/sql';
-const mongoBase = API_BASE_URL ? `${API_BASE_URL}/api` : '/api/mongo';
+const API_MODE = import.meta.env.VITE_API_MODE || 'gateway';
+const externalBase = API_BASE_URL.replace(/\/$/, '');
+const sqlBase = externalBase ? `${externalBase}/api${API_MODE === 'node' ? '' : '/sql'}` : '/api/sql';
+const mongoBase = externalBase ? `${externalBase}/api${API_MODE === 'node' ? '' : '/mongo'}` : '/api/mongo';
 
 export const eventService = {
   getAll: () => withFallback(() => apiCall('GET', `${sqlBase}/events`), () => mock.mockEvents),

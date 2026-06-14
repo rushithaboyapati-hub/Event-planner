@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const GATEWAY_BASE = `${API_BASE_URL}/api`;
 const API = axios.create({ baseURL: GATEWAY_BASE });
 
@@ -35,16 +35,21 @@ export async function login(email, password) {
   const res = await API.post('/auth/login', { email, password });
   authData = res.data;
   localStorage.setItem('auth', JSON.stringify(authData));
-  return authData;
+  return res.data;
 }
 
 export async function register(name, email, password, role = 'USER') {
   const res = await API.post('/auth/register', {
     name, email, passwordHash: password, role
   });
-  authData = res.data;
-  localStorage.setItem('auth', JSON.stringify(authData));
-  return authData;
+  if (res.data?.token) {
+    authData = res.data;
+    localStorage.setItem('auth', JSON.stringify(authData));
+  } else {
+    authData = null;
+    localStorage.removeItem('auth');
+  }
+  return res.data;
 }
 
 export function logout() {

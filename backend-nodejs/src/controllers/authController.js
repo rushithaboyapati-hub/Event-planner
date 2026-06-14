@@ -10,7 +10,8 @@ function toLoginResponse(token, user) {
     userId: user.id,
     email: user.email,
     name: user.name,
-    role: user.role
+    role: user.role,
+    isVerified: user.isVerified
   };
 }
 
@@ -29,6 +30,10 @@ exports.login = async (req, res) => {
     const matches = await bcrypt.compare(password, user.passwordHash);
     if (!matches) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({ error: 'Account pending admin approval' });
     }
 
     const token = generateToken(user.id, user.email, user.role);
@@ -65,15 +70,27 @@ exports.register = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(passwordHash, 10);
+    const isFirstUser = userCount === 0;
     const user = await User.create({
       name,
       email,
       passwordHash: hashed,
       role: finalRole,
-      isVerified: true,
+      isVerified: isFirstUser,
       bio,
       phone
     });
+
+    if (!isFirstUser) {
+      return res.status(202).json({
+        message: 'Registration submitted. An admin must approve this account before login.',
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isVerified: user.isVerified
+      });
+    }
 
     const token = generateToken(user.id, user.email, user.role);
     res.status(201).json(toLoginResponse(token, user));

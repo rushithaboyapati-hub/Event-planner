@@ -37,6 +37,7 @@ public class UserService {
         if (user.getRole() == null) {
             user.setRole(User.UserRole.USER);
         }
+        user.setIsVerified(true);
         return userRepository.save(user);
     }
 

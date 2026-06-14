@@ -1,4 +1,4 @@
-import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
@@ -9,7 +9,7 @@ import Search from './pages/Search';
 import MyRegistrations from './pages/MyRegistrations';
 import Users from './pages/Users';
 import Login from './pages/Login';
-import { isAuthenticated, logout, getAuth, getUserId } from './services/authService';
+import { isAuthenticated, logout, getAuth } from './services/authService';
 
 export default function App() {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ export default function App() {
   const userId = auth?.userId || 1;
   const role = auth?.role || 'USER';
   const canManageEvents = role === 'ORGANIZER' || role === 'ADMIN';
+  const canManageUsers = role === 'ADMIN';
 
   useEffect(() => {
     const check = () => setAuth(getAuth());
@@ -31,7 +32,7 @@ export default function App() {
   };
 
   if (!isAuthenticated()) {
-    return <Login />;
+    return <Login onAuthenticated={() => setAuth(getAuth())} />;
   }
 
   return (
@@ -44,7 +45,7 @@ export default function App() {
           <NavLink to="/calendar">Calendar</NavLink>
           <NavLink to="/search">Search</NavLink>
           <NavLink to="/my-registrations">My Registrations</NavLink>
-          <NavLink to="/users">Users</NavLink>
+          {canManageUsers && <NavLink to="/users">Users</NavLink>}
           <span className="text-muted" style={{ marginLeft: '1rem', fontSize: '0.8rem' }}>
             {auth?.name || auth?.email}
           </span>
@@ -63,7 +64,7 @@ export default function App() {
           <Route path="/calendar" element={<Calendar userId={userId} />} />
           <Route path="/search" element={<Search userId={userId} />} />
           <Route path="/my-registrations" element={<MyRegistrations userId={userId} />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/users" element={canManageUsers ? <Users /> : <Navigate to="/" replace />} />
         </Routes>
       </div>
     </div>

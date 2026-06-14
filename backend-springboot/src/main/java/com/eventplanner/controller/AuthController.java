@@ -37,6 +37,11 @@ public class AuthController {
                     .body(java.util.Map.of("error", "Invalid email or password"));
         }
 
+        if (!Boolean.TRUE.equals(user.getIsVerified())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(java.util.Map.of("error", "Account pending admin approval"));
+        }
+
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail(), user.getRole().name());
         return ResponseEntity.ok(new LoginResponse(token, user.getId(), user.getEmail(),
                 user.getName(), user.getRole().name()));
@@ -72,13 +77,18 @@ public class AuthController {
         if (user.getRole() == null) {
             user.setRole(User.UserRole.USER);
         }
-        user.setIsVerified(true);
+        user.setIsVerified(false);
         User saved = userRepository.save(user);
-        String token = jwtTokenProvider.generateToken(saved.getId(), saved.getEmail(), saved.getRole().name());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new LoginResponse(token, saved.getId(), saved.getEmail(),
-                        saved.getName(), saved.getRole().name()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(java.util.Map.of(
+                        "message", "Registration submitted. An admin must approve this account before login.",
+                        "userId", saved.getId(),
+                        "email", saved.getEmail(),
+                        "name", saved.getName(),
+                        "role", saved.getRole().name(),
+                        "isVerified", saved.getIsVerified()
+                ));
     }
 
     @GetMapping("/me")

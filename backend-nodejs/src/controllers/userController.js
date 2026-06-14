@@ -53,6 +53,7 @@ exports.createUser = async (req, res) => {
       email,
       passwordHash: hashed,
       role: role || 'USER',
+      isVerified: true,
       bio,
       phone
     });

@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from '../services/authService';
 
-export default function Login() {
+export default function Login({ onAuthenticated }) {
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'USER' });
   const [msg, setMsg] = useState(null);
+  const [pendingUser, setPendingUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -15,10 +16,21 @@ export default function Login() {
     setMsg(null);
     try {
       if (isRegister) {
-        await register(form.name, form.email, form.password, form.role);
+        const result = await register(form.name, form.email, form.password, form.role);
+        if (!result?.token) {
+          setPendingUser({
+            email: form.email,
+            role: form.role,
+            message: result?.message || 'Registration submitted. An admin must approve this account before login.'
+          });
+          setIsRegister(false);
+          setForm(prev => ({ ...prev, password: '' }));
+          return;
+        }
       } else {
         await login(form.email, form.password);
       }
+      onAuthenticated?.();
       navigate('/');
     } catch (err) {
       const data = err.response?.data || {};
@@ -30,6 +42,21 @@ export default function Login() {
   };
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+
+  if (pendingUser) {
+    return (
+      <div style={{ maxWidth: 420, margin: '3rem auto' }}>
+        <div className="card">
+          <h2 className="mb-2">Pending Approval</h2>
+          <div className="alert alert-info">{pendingUser.message}</div>
+          <p className="text-muted mb-2">{pendingUser.email} was registered as {pendingUser.role}.</p>
+          <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setPendingUser(null)}>
+            Back to Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: 420, margin: '3rem auto' }}>
@@ -76,7 +103,7 @@ export default function Login() {
 
         <p className="text-center mt-2" style={{ textAlign: 'center', fontSize: '0.85rem' }}>
           {isRegister ? 'Already have an account? ' : "Don't have an account? "}
-          <button className="btn btn-outline btn-sm" onClick={() => { setIsRegister(!isRegister); setMsg(null); }}>
+          <button className="btn btn-outline btn-sm" onClick={() => { setIsRegister(!isRegister); setPendingUser(null); setMsg(null); }}>
             {isRegister ? 'Sign In' : 'Register'}
           </button>
         </p>
