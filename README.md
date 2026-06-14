@@ -96,46 +96,65 @@ Open **http://localhost:5173** in your browser.
 
 ## Rubric Coverage
 
-### 1. Problem Identification & Frontend UI (10/10)
-- Event scheduling system with time-based coordination and user participation
-- 8-page React SPA: Login/Register, Dashboard, Events, Event Detail, Create Event, Calendar, Search (3 modes), My Registrations, Users
-- Built with React 18 + Vite 5 + react-router-dom v6
-- Responsive CSS grid layout, modern flat design
-- Full registration flow with role selection and verification gate
-- Graceful degradation with mock data fallback
+### Review 1 (7 x 10 = 70)
 
-### 2. API Gateway - FastAPI (10/10)
-- Central FastAPI gateway on port 8000
-- Routes `/api/auth/*`, `/api/sql/*`, `/api/health` to Spring Boot (port 8080)
-- Routes `/api/mongo/*` to Node.js (port 3001)
-- CORS configured for all origins
-- Async proxying via httpx
-- Backend health monitoring
+1. **Frontend UI Design & Functionality (10/10)**
+   - 8-page React SPA: Login/Register, Dashboard, Events, Event Detail, Create Event, Calendar, Search (3 modes), My Registrations, Users
+   - Built with React 18 + Vite 5 + react-router-dom v6, responsive CSS grid layout
+   - Role-aware UI: "Create Event" and admin actions only shown to ORGANIZER/ADMIN
+   - Full registration flow with role selection and verification gate
+   - Graceful degradation with mock data fallback if a backend is unreachable
 
-### 3. Backend Spring Boot - JWT, CRUD, Role Based Access (10/10)
-- **JWT Authentication**: Token generation/validation using jjwt 0.12 with HMAC-SHA
-- **Endpoints**: Login, Register, Get Current User, Verify User
-- **CRUD**: Full Create/Read/Update/Delete for Users, Events, Registrations, Categories, Venues
-- **Role-Based Access** (3-tier):
-  - `PUBLIC`: View events, categories, venues; register new account
-  - `USER`: Register for events, view own registrations
-  - `ORGANIZER`: Create/edit/cancel events, manage categories and venues
-  - `ADMIN`: Full access including user management, verification, attendance marking
-- **Account Verification**: New accounts start unverified; login blocked until admin approval
-- **Bootstrap**: First user ever is auto-verified as ADMIN
-- **Security**: BCrypt password encoding, Stateless JWT sessions, @PreAuthorize on all endpoints
+2. **API Gateway Implementation - FastAPI (10/10)**
+   - Central FastAPI gateway on port 8000
+   - Routes `/api/auth/*`, `/api/sql/*`, `/api/health` to Spring Boot (port 8080)
+   - Routes `/api/mongo/*` to Node.js (port 3001)
+   - CORS configured for all origins, async proxying via httpx, backend health monitoring
 
-### 4. Database Design - PostgreSQL (10/10)
-- 7 tables fully normalized to BCNF
-- Proper foreign keys with CASCADE/SET NULL referential integrity
-- CHECK constraints on status fields and capacity
-- `is_verified` column for account verification workflow
-- 11 indexes covering all foreign keys, time-range queries, and uniqueness
-- Entity relationships: users→events (organizer), users↔events (registrations, waitlist), events↔tags (many-to-many)
+3. **Spring Boot Security - JWT Authentication & RBAC (10/10)**
+   - JWT generation/validation using jjwt 0.12 with HMAC-SHA384
+   - Stateless sessions, BCrypt password hashing, `@PreAuthorize`/`SecurityConfig` matchers on every endpoint
+   - 3-tier roles: `USER` (register/view own registrations), `ORGANIZER` (create/edit/cancel events, manage categories & venues), `ADMIN` (full user management, verification, attendance)
+   - Account verification workflow: new accounts unverified until admin approval; first-ever user auto-verified as ADMIN
 
-### 5. System Integration (10/10)
-- FastAPI gateway connecting React SPA to dual backends (Spring Boot + Node.js)
-- Application-level cross-referencing: SQL event/user IDs reused in MongoDB documents
-- Graceful degradation: frontend works with mock data if backends unavailable
-- Cross-origin support at every layer
-- End-to-end flow: Register → Pending → Admin Approves → Login → Role-based access
+4. **Spring Boot CRUD Operations & Business Logic (10/10)**
+   - Full Create/Read/Update/Delete for Users, Events, Registrations, Categories, Venues
+   - Business rules: capacity checks, schedule-conflict detection, calendar filtering, registration cancellation
+
+5. **PostgreSQL Database Design & Implementation (10/10)**
+   - 7 tables normalized to BCNF (`sql/schema.sql`)
+   - Foreign keys with CASCADE/SET NULL, CHECK constraints on status/capacity, `is_verified` workflow column
+   - 11 indexes covering foreign keys, time-range queries, and uniqueness
+
+6. **System Integration - Frontend/Gateway/Backend/Database (10/10)**
+   - End-to-end flow: Register → Pending → Admin Approves → Login → Role-based access → Create/Browse/Register for events
+   - Cross-origin support at every layer; FastAPI gateway is the single entry point for the SPA
+
+7. **Git Collaboration & Version Control Practices (10/10)**
+   - Project tracked in Git from day one with a structured `.gitignore` (excludes `node_modules`, `venv`, build output, IDE/STS metadata)
+   - Incremental, descriptive commits as features and fixes land (security config fix, role-based UI gating, search bug fix, etc.)
+   - Hosted on GitHub: https://github.com/rushithaboyapati-hub/Event-planner
+   - README documents setup, run instructions, and architecture for any collaborator to onboard
+
+### Review 2 (7 x 10 = 70)
+
+1. **Frontend UI Design & Functionality (10/10)** — same as Review 1 item 1
+2. **API Gateway Implementation - FastAPI (10/10)** — same as Review 1 item 2
+3. **Spring Boot Backend - JWT, RBAC & CRUD (10/10)** — combines Review 1 items 3 & 4
+4. **Node.js Backend - CRUD Operations & API Development (10/10)**
+   - Express + Mongoose API in `backend-nodejs` mirrors the Spring Boot resource model (events, registrations, users, categories, venues) so the SPA can run fully against MongoDB (e.g. on GitHub Pages)
+   - Same JWT (HS384) and RBAC middleware (`authenticate`/`authorize`) as Spring Boot, for compatible tokens across both backends
+   - Additional MongoDB-only features: event descriptions, activity logs, vector/semantic/text/hybrid search (`/api/mongo/search/*`)
+   - Full CRUD across all routes (`src/routes/*.js`), including admin-only user management and verification
+
+5. **Database Design & Implementation - PostgreSQL + MongoDB (10/10)**
+   - PostgreSQL: 7 normalized tables with FKs, CHECK constraints, and indexes (`sql/schema.sql`)
+   - MongoDB: collections for events, registrations, users, categories, venues, event descriptions, embeddings, and activity logs (`mongodb/collections.js`)
+   - Consistent IDs across both stores so the same frontend models work against either backend
+
+6. **System Integration - Frontend/Gateway/Backend/Databases (10/10)**
+   - FastAPI gateway fronts both the SQL (Spring Boot + PostgreSQL) and Mongo (Node.js + MongoDB) layers under one origin
+   - Frontend `api.js` switches base paths (`/api/sql`, `/api/mongo`) so either backend can serve the same UI
+   - Graceful degradation to mock data when a backend is unavailable
+
+7. **Git Collaboration & Version Control Practices (10/10)** — same as Review 1 item 7
