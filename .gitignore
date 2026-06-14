@@ -28,3 +28,6 @@ backend-fastapi/__pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local agent tooling
+.claude/

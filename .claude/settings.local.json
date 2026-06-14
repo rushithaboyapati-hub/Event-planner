@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(cd \"/c/DBMS Project/Eventplanner/Eventplanner/backend-springboot\" && find src/main/java -type f -name \"*.java\" | head -100)",
-      "Read(//c/c/DBMS Project/Eventplanner/Eventplanner/backend-springboot/src/main/**)"
-    ]
-  }
-}
