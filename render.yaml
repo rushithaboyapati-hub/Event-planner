@@ -1,0 +1,60 @@
+services:
+  - type: web
+    name: eventplanner-springboot
+    env: java
+    plan: free
+    buildCommand: cd backend-springboot && mvn -DskipTests package
+    startCommand: cd backend-springboot && java -jar target/eventplanner-sql-1.0.0.jar
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        value: localhost
+      - key: DB_NAME
+        value: eventplanner
+      - key: DB_USER
+        value: postgres
+      - key: DB_PASSWORD
+        value: postgres
+
+  - type: web
+    name: eventplanner-nodejs
+    env: node
+    plan: free
+    buildCommand: cd backend-nodejs && npm install
+    startCommand: cd backend-nodejs && node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODEJS_PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: mongodb://127.0.0.1:27017/eventplanner
+
+  - type: web
+    name: eventplanner-fastapi
+    env: python
+    plan: free
+    buildCommand: cd backend-fastapi && pip install -r requirements.txt
+    startCommand: cd backend-fastapi && python main.py
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FASTAPI_PORT
+        value: 10000
+      - key: SQL_API_URL
+        value: https://eventplanner-springboot.onrender.com
+      - key: MONGO_API_URL
+        value: https://eventplanner-nodejs.onrender.com
+
+  - type: web
+    name: eventplanner-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: FRONTEND_PORT
+        value: 10000
+      - key: GATEWAY_URL
+        value: https://eventplanner-fastapi.onrender.com

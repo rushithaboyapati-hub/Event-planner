@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "Eventplanner",
+    "createdAt": 1779676028287,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "C:\\FEDF\\Eventplanner"
+  ],
+  "reload": null
+}
