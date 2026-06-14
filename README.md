@@ -7,7 +7,7 @@ Frontend (React + Vite) :5173
     |
     +-- /api/* --> FastAPI Gateway :8000
                     +-- /api/auth/* --+
-                    +-- /api/sql/* ---+--> Spring Boot :8080 --> PostgreSQL :5432
+                    +-- /api/sql/* ---+--> Spring Boot :8090 --> PostgreSQL :5432
                     +-- /api/health --+
                     +-- /api/mongo/* ----> Node.js/Express :3001 --> MongoDB :27017
 ```
@@ -39,7 +39,7 @@ load("mongodb/collections.js")
 > For the review/demo flow, the frontend should be served through the Vite dev server at port 5173, which proxies to the FastAPI gateway on port 8000.
 
 ```bash
-# Terminal 1: Spring Boot (port 8080)
+# Terminal 1: Spring Boot (port 8090)
 cd backend-springboot
 mvn spring-boot:run
 
@@ -113,7 +113,7 @@ Open **http://localhost:5173** in your browser.
 
 2. **API Gateway Implementation - FastAPI (10/10)**
    - Central FastAPI gateway on port 8000
-   - Routes `/api/auth/*`, `/api/sql/*`, `/api/health` to Spring Boot (port 8080)
+   - Routes `/api/auth/*`, `/api/sql/*`, `/api/health` to Spring Boot (port 8090)
    - Routes `/api/mongo/*` to Node.js (port 3001)
    - CORS configured for all origins, async proxying via httpx, backend health monitoring
 

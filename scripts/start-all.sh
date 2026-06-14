@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/.."
 
 echo ""
-echo "=== Step 1: Starting Spring Boot Backend (port 8080) ==="
+echo "=== Step 1: Starting Spring Boot Backend (port 8090) ==="
 cd backend-springboot
 mvn spring-boot:run &
 SPRING_PID=$!
@@ -44,7 +44,7 @@ echo "======================================"
 echo "All services started!"
 echo "Frontend: http://localhost:5173"
 echo "FastAPI Gateway: http://localhost:8000"
-echo "Spring Boot: http://localhost:8080"
+echo "Spring Boot: http://localhost:8090"
 echo "Node.js API: http://localhost:3001"
 echo ""
 echo "Press Ctrl+C to stop all services"

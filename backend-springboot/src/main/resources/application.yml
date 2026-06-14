@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:${SPRINGBOOT_PORT:8080}}
+  port: ${PORT:${SPRINGBOOT_PORT:8090}}
 
 spring:
   datasource:

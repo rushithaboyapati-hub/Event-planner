@@ -7,7 +7,7 @@ echo.
 echo Make sure PostgreSQL and MongoDB are running first.
 echo.
 
-echo === Step 1: Starting Spring Boot Backend (port 8080) ===
+echo === Step 1: Starting Spring Boot Backend (port 8090) ===
 start "SpringBoot" cmd /c "cd backend-springboot && mvn spring-boot:run"
 timeout /t 15 /nobreak >nul
 
@@ -27,7 +27,7 @@ echo ======================================
 echo All services started!
 echo Frontend: http://localhost:5173
 echo FastAPI Gateway: http://localhost:8000
-echo Spring Boot: http://localhost:8080
+echo Spring Boot: http://localhost:8090
 echo Node.js API: http://localhost:3001
 echo ======================================
 echo.

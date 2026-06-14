@@ -21,7 +21,7 @@ def _parse_backend_urls(env_name: str, default_urls: list[str]) -> list[str]:
         return [value.strip().rstrip("/") for value in configured.split(",") if value.strip()]
     return default_urls
 
-SQL_BASES = _parse_backend_urls("SQL_API_URL", ["http://localhost:8080", "http://localhost:8090"])
+SQL_BASES = _parse_backend_urls("SQL_API_URL", ["http://localhost:8090", "http://localhost:8080"])
 MONGO_BASES = _parse_backend_urls("MONGO_API_URL", ["http://localhost:3001"])
 
 client = httpx.AsyncClient(timeout=30.0)
