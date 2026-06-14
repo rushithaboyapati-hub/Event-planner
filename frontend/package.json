@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "start": "vite build && node server-standalone.js",
+    "build": "vite build .",
+    "start": "vite build . && node server-standalone.js",
     "serve": "node server-standalone.js"
   },
   "dependencies": {

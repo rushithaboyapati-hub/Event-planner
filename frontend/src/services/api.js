@@ -23,10 +23,12 @@ const apiCall = async (method, url, data = null, params = {}) => {
   });
 };
 
-const withFallback = (apiCallFn, mockFn) => {
+const withFallback = (apiCallFn, mockFn, options = {}) => {
   return apiCallFn().catch(err => {
     const isNetworkErr = err instanceof TypeError || err.message?.includes('Failed to fetch');
-    if (isNetworkErr || err.response?.status >= 500) {
+    const status = err.response?.status;
+    const fallbackStatuses = options.fallbackStatuses || [];
+    if (isNetworkErr || status >= 500 || fallbackStatuses.includes(status)) {
       console.warn('Backend unavailable, using mock data');
       return { data: mockFn() };
     }
@@ -78,12 +80,12 @@ export const userService = {
 };
 
 export const categoryService = {
-  getAll: () => withFallback(() => apiCall('GET', `${sqlBase}/categories`), () => mock.mockCategories),
+  getAll: () => withFallback(() => apiCall('GET', `${sqlBase}/categories`), () => mock.mockCategories, { fallbackStatuses: [404] }),
   create: (data) => withFallback(() => apiCall('POST', `${sqlBase}/categories`, data), () => mock.addCategory({ ...data }))
 };
 
 export const venueService = {
-  getAll: () => withFallback(() => apiCall('GET', `${sqlBase}/venues`), () => mock.mockVenues),
+  getAll: () => withFallback(() => apiCall('GET', `${sqlBase}/venues`), () => mock.mockVenues, { fallbackStatuses: [404] }),
   create: (data) => withFallback(() => apiCall('POST', `${sqlBase}/venues`, data), () => mock.addVenue({ ...data }))
 };
 

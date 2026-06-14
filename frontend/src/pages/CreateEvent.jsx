@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { eventService, categoryService, venueService } from '../services/api';
 
+const listFromResponse = (response) => {
+  if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response)) return response;
+  return [];
+};
+
 export default function CreateEvent({ userId, canManageEvents }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -17,8 +23,8 @@ export default function CreateEvent({ userId, canManageEvents }) {
       categoryService.getAll().catch(() => ({ data: [] })),
       venueService.getAll().catch(() => ({ data: [] }))
     ]).then(([c, v]) => {
-      setCategories(c.data);
-      setVenues(v.data);
+      setCategories(listFromResponse(c));
+      setVenues(listFromResponse(v));
     });
   }, []);
 
@@ -106,7 +112,11 @@ export default function CreateEvent({ userId, canManageEvents }) {
               <label>Venue</label>
               <select value={form.venueId} onChange={set('venueId')}>
                 <option value="">Select venue</option>
-                {venues.map(v => <option key={v.id} value={v.id}>{v.name} ({v.city})</option>)}
+                {venues.map(v => (
+                  <option key={v.id} value={v.id}>
+                    {v.city ? `${v.name} (${v.city})` : v.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
