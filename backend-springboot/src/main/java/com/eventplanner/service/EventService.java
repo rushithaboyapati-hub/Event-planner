@@ -23,19 +23,16 @@ public class EventService {
     private final VenueRepository venueRepository;
     private final TagRepository tagRepository;
     private final RegistrationRepository registrationRepository;
-    private final WaitlistRepository waitlistRepository;
 
     public EventService(EventRepository eventRepository, UserRepository userRepository,
                         CategoryRepository categoryRepository, VenueRepository venueRepository,
-                        TagRepository tagRepository, RegistrationRepository registrationRepository,
-                        WaitlistRepository waitlistRepository) {
+                        TagRepository tagRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.venueRepository = venueRepository;
         this.tagRepository = tagRepository;
         this.registrationRepository = registrationRepository;
-        this.waitlistRepository = waitlistRepository;
     }
 
     public EventResponse createEvent(Long organizerId, EventRequest request) {

@@ -1,9 +1,11 @@
 package com.eventplanner.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "venues")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Venue {
 
     @Id

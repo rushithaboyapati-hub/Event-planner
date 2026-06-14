@@ -42,6 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/uinfo").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/categories/**", "/api/venues/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/events/calendar").permitAll()
