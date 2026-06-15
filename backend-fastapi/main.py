@@ -33,6 +33,7 @@ async def proxy_request(base_urls, request: Request, target_path: str = None):
     headers = dict(request.headers)
     headers.pop("host", None)
     headers.pop("content-length", None)
+    headers["accept-encoding"] = "identity"
 
     last_error = None
     for base_url in base_urls:
